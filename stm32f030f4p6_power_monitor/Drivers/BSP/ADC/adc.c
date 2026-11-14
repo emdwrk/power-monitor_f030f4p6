@@ -105,13 +105,26 @@ static uint8_t adc_16bit_sample(uint16_t *result_data)
 }
 
 
-uint8_t adc_convert_to_IandV(float *I,float *V,float *W)
-{   
+uint8_t adc_convert_to_IandV(int32_t *I, int32_t *V, int32_t *W)
+{
     uint16_t result_data[2] = {0};
+    uint32_t r0, r1, i, v, ihi, ilo, vhi, vlo;
+
     adc_16bit_sample(result_data);
 
-    *I = ((float)result_data[0] * ADC_REF_VOLTAGE / (65536.f * 0.4f));
-    *V = ((float)result_data[1] * ADC_REF_VOLTAGE / 65536.f) * (R_UP + R_DOWM) / R_DOWM;
-    *W = (*I) * (*V);
+    r0 = result_data[0];
+    r1 = result_data[1];
+
+    /* I(A) = r0 * 3.29 / (65536 * 0.4)  ->  I*10000 = r0 * 82250 / 65536 */
+    i = r0 + ((r0 * 16714u + 32768u) >> 16);
+    /* V(V) = r1 * 3.29 / 65536 * 34500/5100  ->  V*10000 = r1 * 222559 / 65536 */
+    v = r1 * 3u + ((r1 * 25951u + 32768u) >> 16);
+
+    ihi = i / 10000u;  ilo = i % 10000u;
+    vhi = v / 10000u;  vlo = v % 10000u;
+
+    *I = (int32_t)i;
+    *V = (int32_t)v;
+    *W = (int32_t)(ihi * vhi * 10000u + ihi * vlo + ilo * vhi + (ilo * vlo) / 10000u);
     return 0;
 }

@@ -4,26 +4,26 @@
 #include "./BSP/SWITCH/switch.h"
 #include "./BSP/ADC/adc.h"
 
-float I = 0.0f;
-float V = 0.0f;
-float W = 0.0f;
+/* All measurement values are fixed-point: value * 10000 (4 decimals). */
+int32_t I = 0;
+int32_t V = 0;
+int32_t W = 0;
 
 #define HIST_LEN  120
-#define EMA_A     0.10f
+#define HIST_MS   250u
+#define THR_W     500
 
-static float g_hist_w[HIST_LEN];
-static float g_hist_v[HIST_LEN];
-static float g_hist_i[HIST_LEN];
+static int32_t g_hist_w[HIST_LEN];
 static uint16_t g_hpos = 0;
-static float g_energy_Ws = 0.0f;
-static float g_peak_w = 0.0f;
-static float g_min_w  = 9999.0f;
+static int32_t g_charge_mAh = 0;
+static int32_t g_peak_w = 0;
 
 int main(void)
 {
-    float Vmax = 0.0f, Imax = 0.0f, Wavg = 0.0f;
-    float Is = 0.0f, Vs = 0.0f, Ws = 0.0f;
+    int32_t Vmax = 0, Imax = 0, Wavg = 0;
+    int32_t Is = 0, Vs = 0, Ws = 0;
     uint32_t frame = 0;
+    uint32_t t_last, t_now, t_hist = 0;
 
     HAL_Init();
     SystemClock_Init();
@@ -32,50 +32,53 @@ int main(void)
     lcd_init();
     switch_init();
     switch_set(1);
+    LCD_BootAnim();
     adc_init();
 
-    while(1)
+    t_last = HAL_GetTick();
+
+    while (1)
     {
-        float ri, rv, rw;
+        int32_t ri, rv, rw;
+        uint32_t dt_ms;
+
+        t_now = HAL_GetTick();
+        dt_ms = t_now - t_last;
+        t_last = t_now;
+        if (dt_ms > 500u) dt_ms = 500u;
+
         adc_convert_to_IandV(&ri, &rv, &rw);
 
         if (frame == 0) { Is = ri; Vs = rv; Ws = rw; }
-        else {
-            Is = (1.0f - EMA_A) * Is + EMA_A * ri;
-            Vs = (1.0f - EMA_A) * Vs + EMA_A * rv;
-            Ws = (1.0f - EMA_A) * Ws + EMA_A * rw;
+        else
+        {
+            Is = (9 * Is + ri) / 10;
+            Vs = (9 * Vs + rv) / 10;
+            Ws = (9 * Ws + rw) / 10;
         }
 
         I = Is; V = Vs; W = Ws;
 
         if (I > Imax) Imax = I;
         if (V > Vmax) Vmax = V;
+        if (W > g_peak_w) g_peak_w = W;
 
         if (frame == 0) Wavg = W;
-        else            Wavg = 0.98f * Wavg + 0.02f * W;
+        else            Wavg = (49 * Wavg + W) / 50;
 
-        g_energy_Ws += W * 0.125f;
+        if (W > THR_W) g_charge_mAh += I * dt_ms / 3600u;
 
-        if ((frame & 3) == 0) {
+        if ((uint32_t)(t_now - t_hist) >= HIST_MS)
+        {
+            t_hist = t_now;
             g_hist_w[g_hpos] = W;
-            g_hist_v[g_hpos] = V;
-            g_hist_i[g_hpos] = I;
             g_hpos = (g_hpos + 1) % HIST_LEN;
         }
 
-        if (W > g_peak_w) g_peak_w = W;
-        if (W < g_min_w && W > 0.001f) g_min_w = W;
-        if ((frame & 2047) == 0) { g_peak_w *= 0.5f; g_min_w = 9999.0f; }
-
-        LCD_ShowIUW(I, V, W, Imax, Vmax, Wavg,
-                    g_energy_Ws / 3600.0f,
-                    g_hist_w, HIST_LEN);
+        LCD_ShowIUW(I, V, W, Imax, Vmax, g_peak_w, Wavg,
+                    g_charge_mAh, t_now / 1000u,
+                    g_hist_w, HIST_LEN, t_now);
 
         frame++;
-
-        if ((frame & 127) == 0) {
-            Imax *= 0.92f;
-            Vmax *= 0.92f;
-        }
     }
 }

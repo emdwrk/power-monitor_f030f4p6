@@ -2,186 +2,128 @@
 
 static uint16_t ui_line_buf[LCD_W];
 
-/* ================= Unicode font (STZHONGS 16px bpp=1) ================= */
+/* ================= Unicode font (16px bpp=1) ================= */
+
+#define FONT_N 62
 
 static const uint8_t font_bits[] = {
-    0x0,
-    0x70, 0x44, 0x42, 0x22, 0x21, 0x12, 0x8, 0x90,
-    0x39, 0x38, 0x12, 0x20, 0x91, 0x8, 0x88, 0x84,
-    0x44, 0x1c,
-    0xf8,
-    0xf0,
-    0x3e, 0x31, 0x98, 0xd8, 0x3c, 0x1e, 0xf, 0x7,
-    0x83, 0x43, 0x31, 0x8f, 0x0,
-    0x33, 0xc3, 0xc, 0x30, 0xc3, 0xc, 0x30, 0xcf,
-    0xc0,
-    0x3c, 0x46, 0x83, 0x83, 0x3, 0x6, 0x6, 0x8,
-    0x31, 0x61, 0xff,
-    0x3e, 0x47, 0x3, 0x6, 0x18, 0x6, 0x3, 0x83,
-    0xc3, 0x46, 0x3c,
-    0x6, 0x6, 0xe, 0x16, 0x26, 0x66, 0x46, 0xff,
-    0x6, 0x6, 0xf,
-    0x2, 0x7e, 0x40, 0x40, 0x7c, 0x6, 0x3, 0x3,
-    0x83, 0xc3, 0xc6, 0x3c,
-    0x1e, 0x30, 0x60, 0xdc, 0xe6, 0xc3, 0xc3, 0xc3,
-    0xc3, 0x66, 0x3c,
-    0x80, 0xff, 0x82, 0x2, 0x4, 0x8, 0x8, 0x18,
-    0x10, 0x30, 0x30, 0x30,
-    0x3e, 0x67, 0x43, 0x43, 0x26, 0x3e, 0xc3, 0x81,
-    0x81, 0xc2, 0x3c,
-    0x3c, 0x66, 0xc3, 0xc3, 0xc3, 0xe7, 0x7b, 0x3,
-    0x6, 0xc, 0x78,
-    0xf0, 0xf,
-    0x4, 0x1, 0xc0, 0x38, 0x5, 0x1, 0x30, 0x26,
-    0x4, 0x41, 0xfc, 0x21, 0x8c, 0x11, 0x3, 0x70,
-    0xf0,
-    0xff, 0x18, 0x76, 0xd, 0x83, 0x61, 0x9f, 0xc6,
-    0x1d, 0x83, 0x60, 0xd8, 0x7f, 0xf0,
-    0x1f, 0x46, 0x19, 0x81, 0x60, 0x2c, 0x1, 0x80,
-    0x30, 0x6, 0x0, 0x60, 0x26, 0x18, 0x7c, 0x0,
-    0xff, 0xc, 0x31, 0x83, 0x30, 0x36, 0x6, 0xc0,
-    0xd8, 0x1b, 0x3, 0x60, 0xcc, 0x33, 0xfc, 0x0,
-    0xff, 0x18, 0x66, 0x9, 0x90, 0x64, 0x1f, 0x6,
-    0x41, 0x90, 0x60, 0x58, 0x6f, 0xf8,
-    0xff, 0x30, 0x98, 0x2c, 0x86, 0x43, 0xe1, 0x90,
-    0xc8, 0x60, 0x30, 0x3c, 0x0,
-    0x1e, 0x86, 0x31, 0x83, 0x60, 0xc, 0x1, 0x83,
-    0xf0, 0x36, 0x6, 0x60, 0xce, 0x38, 0x79, 0x0,
-    0xf1, 0xec, 0x19, 0x83, 0x30, 0x66, 0xc, 0xff,
-    0x98, 0x33, 0x6, 0x60, 0xcc, 0x1b, 0xc7, 0x80,
-    0xf6, 0x66, 0x66, 0x66, 0x66, 0xf0,
-    0x7, 0x81, 0x80, 0xc0, 0x60, 0x30, 0x18, 0xd,
-    0x86, 0xc3, 0x63, 0xf, 0x0,
-    0xf1, 0xcc, 0x31, 0x8c, 0x33, 0x6, 0xc0, 0xf8,
-    0x1d, 0x83, 0x18, 0x61, 0x8c, 0x33, 0xcf, 0x80,
-    0xf0, 0x30, 0x18, 0xc, 0x6, 0x3, 0x1, 0x80,
-    0xc1, 0x60, 0xb1, 0xbf, 0xc0,
-    0xe0, 0x7b, 0x83, 0x9c, 0x1c, 0xa1, 0x65, 0x8b,
-    0x24, 0x99, 0x34, 0xc9, 0xa6, 0x46, 0x32, 0x31,
-    0xb9, 0x9e,
-    0xe1, 0xdc, 0x25, 0x89, 0x62, 0x4c, 0x91, 0x24,
-    0x69, 0xe, 0x43, 0x90, 0x6e, 0x8,
-    0x1f, 0x6, 0x31, 0x83, 0x60, 0x3c, 0x7, 0x80,
-    0xf0, 0x1e, 0x3, 0x60, 0xc6, 0x30, 0x7c, 0x0,
-    0xfe, 0x31, 0xd8, 0x6c, 0x36, 0x3b, 0xf9, 0x80,
-    0xc0, 0x60, 0x30, 0x3c, 0x0,
-    0x1f, 0x6, 0x31, 0x83, 0x60, 0x3c, 0x7, 0x80,
-    0xf0, 0x1e, 0x3, 0x60, 0xc4, 0x10, 0x7c, 0x2,
-    0x0, 0x64, 0x7, 0x0,
-    0xff, 0xc, 0x39, 0x83, 0x30, 0x66, 0x1c, 0xfe,
-    0x19, 0x3, 0x30, 0x63, 0xc, 0x33, 0xc3, 0x80,
-    0x3e, 0x71, 0xb0, 0x58, 0x7, 0x0, 0xf0, 0xf,
-    0x3, 0xc1, 0xf1, 0x97, 0x80,
-    0x40, 0x9f, 0xec, 0xce, 0x31, 0xc, 0x3, 0x0,
-    0xc0, 0x30, 0xc, 0x3, 0x0, 0xc0, 0x78,
-    0xf0, 0xec, 0x9, 0x81, 0x30, 0x26, 0x4, 0xc0,
-    0x98, 0x13, 0x2, 0x60, 0x46, 0x10, 0x7c, 0x0,
-    0xf0, 0xec, 0x8, 0x81, 0x18, 0x43, 0x8, 0x22,
-    0x6, 0x40, 0x48, 0xe, 0x1, 0xc0, 0x10, 0x0,
-    0xf3, 0x8e, 0xc2, 0x8, 0x86, 0x11, 0x8c, 0x43,
-    0x18, 0x82, 0x51, 0x4, 0xb4, 0xd, 0x28, 0xc,
-    0x50, 0x18, 0xc0, 0x30, 0x80,
-    0x79, 0xe3, 0xc, 0x18, 0x81, 0x90, 0xe, 0x0,
-    0x60, 0xb, 0x1, 0x18, 0x20, 0x86, 0xc, 0xf1,
-    0xf0,
-    0xf1, 0xd8, 0x22, 0x10, 0xc4, 0x1a, 0x7, 0x80,
-    0xc0, 0x30, 0xc, 0x3, 0x1, 0xe0,
-    0x7f, 0x90, 0x48, 0x30, 0x18, 0xc, 0x2, 0x1,
-    0x80, 0xc1, 0x60, 0x90, 0x6f, 0xf8,
-    0x10, 0xc0, 0x21, 0x10, 0xff, 0xf1, 0x4, 0x2,
-    0x7f, 0xc, 0x86, 0x29, 0xfc, 0x52, 0x18, 0x27,
-    0xf0, 0x48, 0x60, 0x9f, 0xc1, 0x21, 0x82, 0x43,
-    0xc5, 0xff, 0x88, 0x0, 0x0,
-    0x0, 0xe0, 0x13, 0x7, 0x8c, 0x85, 0xff, 0x10,
-    0xc8, 0x43, 0x21, 0xc, 0x84, 0x22, 0x12, 0x88,
-    0x76, 0x2f, 0x18, 0x90, 0xc2, 0x2, 0xf8, 0x10,
-    0xc0, 0x80, 0x0,
-    0x20, 0x8, 0x7f, 0xf8, 0x82, 0x1, 0x4, 0x2,
-    0x8, 0x4, 0x12, 0xb, 0xfe, 0x10, 0x50, 0x20,
-    0x90, 0x41, 0x30, 0x82, 0x42, 0x4, 0x27, 0xff,
-    0xd0, 0x0, 0x0, 0x0, 0x0,
-    0x10, 0xc0, 0x21, 0x80, 0x42, 0x0, 0x8f, 0xf1,
-    0x10, 0x5f, 0xa0, 0x84, 0xa1, 0xa, 0x22, 0x10,
-    0x44, 0x20, 0x8, 0x73, 0x97, 0x98, 0x24, 0x0,
-    0x40, 0xf, 0x80, 0x4, 0x0,
-    0x3, 0x0, 0x8, 0x0, 0x20, 0x0, 0x80, 0x2,
-    0xb, 0xff, 0xf0, 0x30, 0x0, 0xc0, 0x2, 0x80,
-    0x13, 0x0, 0x44, 0x2, 0x18, 0x10, 0x39, 0x80,
-    0x70,
-    0x0, 0x18, 0x7f, 0xf8, 0x4, 0x0, 0x88, 0x80,
-    0x93, 0x1, 0xa4, 0x2, 0x50, 0x0, 0x86, 0xff,
-    0xfc, 0x2, 0x0, 0x4, 0x0, 0x8, 0x0, 0x10,
-    0x0, 0x20, 0x0, 0x40, 0x0,
-    0x10, 0x20, 0x3f, 0xc0, 0x7f, 0x80, 0x81, 0x1,
-    0xfe, 0x2, 0x1, 0x3f, 0xff, 0x11, 0x8, 0x3e,
-    0xf8, 0x7d, 0x60, 0x89, 0xc1, 0x3b, 0xf, 0xa5,
-    0x8, 0x71, 0xc0,
-    0x0, 0xe0, 0x60, 0x88, 0x5f, 0xf8, 0x46, 0x4,
-    0x99, 0x6, 0x61, 0x5, 0xbf, 0x9, 0xa8, 0x22,
-    0x50, 0xc4, 0xa0, 0x89, 0x41, 0x32, 0xa2, 0x45,
-    0x25, 0xb, 0xc0,
-    0x3, 0x0, 0x2, 0x11, 0xff, 0xf1, 0x8, 0x1,
-    0x6d, 0x83, 0xf2, 0x6, 0x88, 0xb, 0xec, 0x66,
-    0x48, 0x82, 0x9b, 0xff, 0xf8, 0x8, 0x0, 0x10,
-    0x0, 0x20, 0x0, 0x40, 0x0,
-    0x8, 0x0, 0x80, 0x8, 0xf, 0xfe, 0x88, 0xc8,
-    0x8c, 0xff, 0xc8, 0x8c, 0x88, 0xcf, 0xfc, 0x88,
-    0xc0, 0x81, 0x8, 0x30, 0xff,
-    0x04, 0x00, 0x04, 0x00, 0x04, 0x00, 0x04, 0x00,
-    0x04, 0x00, 0x04, 0x20, 0x04, 0x20, 0x04, 0x20,
-    0x04, 0x60, 0x04, 0x20, 0x7f, 0xe0, 0x04, 0x20,
-    0x04, 0x20, 0x00, 0x60
+    0x38, 0x20, 0xD8, 0xC1, 0x11, 0x02, 0x24, 0x04, 0x48, 0x08, 0xA7, 0x1A, 0x5B, 0x1D, 0x22, 0x02,
+    0x44, 0x08, 0x88, 0x31, 0x90, 0x41, 0xC0, 0x01, 0xE0, 0x00, 0x00, 0x00, 0x03, 0x08, 0x23, 0x00,
+    0x00, 0x00, 0x0C, 0x20, 0x1C, 0x1F, 0x18, 0xCC, 0x66, 0x33, 0x09, 0x84, 0xC6, 0x63, 0x31, 0x8F,
+    0x83, 0x80, 0x1C, 0x1E, 0x03, 0x01, 0x80, 0xC0, 0x60, 0x30, 0x18, 0x0C, 0x06, 0x0F, 0xCF, 0xE0,
+    0x3C, 0x3F, 0x10, 0xC0, 0x60, 0x30, 0x30, 0x18, 0x18, 0x18, 0x18, 0x1F, 0xCF, 0xE0, 0x3C, 0x3F,
+    0x00, 0xC0, 0x60, 0x60, 0xE0, 0x38, 0x06, 0x03, 0x21, 0x9F, 0xC7, 0x80, 0x06, 0x07, 0x07, 0x83,
+    0xC3, 0x61, 0x31, 0x99, 0xCE, 0xFF, 0x83, 0x01, 0x80, 0xC0, 0x3F, 0x1F, 0x08, 0x0C, 0x07, 0xE1,
+    0x38, 0x0C, 0x06, 0x03, 0x21, 0x9F, 0x87, 0x80, 0x1E, 0x1F, 0x8C, 0x0C, 0x06, 0x03, 0xF1, 0xCC,
+    0xC2, 0x61, 0x31, 0x8D, 0xC3, 0xC0, 0x7F, 0x3F, 0x80, 0x80, 0xC0, 0x40, 0x60, 0x30, 0x10, 0x18,
+    0x0C, 0x06, 0x03, 0x00, 0x1C, 0x1B, 0x18, 0xCC, 0x63, 0x30, 0xF0, 0xF8, 0xC6, 0x41, 0x31, 0x9D,
+    0xC3, 0xC0, 0x1C, 0x3F, 0x18, 0xC8, 0x64, 0x33, 0x18, 0xFC, 0x06, 0x03, 0x01, 0x1F, 0x87, 0x80,
+    0x0C, 0x07, 0x81, 0xE0, 0x48, 0x33, 0x0C, 0xC2, 0x31, 0xFC, 0x61, 0x98, 0x6C, 0x0B, 0x03, 0x3F,
+    0x06, 0xF0, 0x86, 0x10, 0xC2, 0x18, 0x7E, 0x0C, 0xE1, 0x06, 0x20, 0xC4, 0x18, 0xCE, 0x1F, 0x80,
+    0x0F, 0x07, 0xE3, 0x01, 0x80, 0x60, 0x18, 0x06, 0x01, 0x80, 0x60, 0x0C, 0x21, 0xF8, 0x3C, 0x3E,
+    0x07, 0xF0, 0x86, 0x10, 0x62, 0x0C, 0x41, 0x88, 0x31, 0x06, 0x20, 0xC4, 0x30, 0xFE, 0x1F, 0x00,
+    0x3F, 0x0F, 0xC2, 0x00, 0x80, 0x20, 0x0F, 0xC3, 0xE0, 0x80, 0x20, 0x08, 0x03, 0xF0, 0xFE, 0x3F,
+    0x9F, 0x88, 0x04, 0x02, 0x01, 0xF0, 0xFC, 0x40, 0x20, 0x10, 0x08, 0x04, 0x00, 0x0F, 0x03, 0xF8,
+    0xC0, 0x30, 0x06, 0x00, 0xC3, 0x98, 0xF3, 0x06, 0x60, 0xC6, 0x18, 0x7F, 0x07, 0xC0, 0x20, 0xC2,
+    0x0C, 0x20, 0xC2, 0x0C, 0x20, 0xC3, 0xFC, 0x3F, 0xC2, 0x0C, 0x20, 0xC2, 0x0C, 0x20, 0xC2, 0x0C,
+    0x21, 0x08, 0x42, 0x10, 0x84, 0x21, 0x08, 0x40, 0x06, 0x03, 0x01, 0x80, 0xC0, 0x60, 0x30, 0x18,
+    0x0C, 0x06, 0x23, 0x1F, 0x87, 0x80, 0x20, 0xC4, 0x30, 0x8C, 0x13, 0x02, 0xE0, 0x7C, 0x0F, 0x81,
+    0x98, 0x21, 0x84, 0x30, 0x83, 0x10, 0x60, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01, 0x00, 0x80, 0x40,
+    0x20, 0x10, 0x0F, 0xC7, 0xE0, 0x30, 0x71, 0x83, 0x8E, 0x1C, 0x71, 0xE2, 0x8B, 0x16, 0x58, 0xB6,
+    0xC4, 0xA6, 0x27, 0x31, 0x19, 0x88, 0x8C, 0x40, 0x60, 0x30, 0xC3, 0x0C, 0x38, 0xC2, 0x8C, 0x2C,
+    0xC2, 0x4C, 0x26, 0xC2, 0x34, 0x23, 0x42, 0x1C, 0x21, 0xC2, 0x0C, 0x0F, 0x01, 0xFC, 0x30, 0xC6,
+    0x06, 0x60, 0x66, 0x06, 0x60, 0x66, 0x06, 0x60, 0x63, 0x0C, 0x1F, 0xC0, 0xF0, 0x3F, 0x0F, 0xE2,
+    0x18, 0x83, 0x20, 0x88, 0x63, 0xF0, 0xC0, 0x20, 0x08, 0x02, 0x00, 0x80, 0x0F, 0x01, 0xFC, 0x30,
+    0xC6, 0x06, 0x60, 0x66, 0x06, 0x60, 0x66, 0x06, 0x60, 0x63, 0x0C, 0x3F, 0xC0, 0xF0, 0x07, 0x00,
+    0x3E, 0x00, 0xE0, 0x3F, 0x07, 0xF0, 0x82, 0x10, 0x62, 0x18, 0x6F, 0x0F, 0xC1, 0x18, 0x23, 0x04,
+    0x30, 0x86, 0x10, 0x60, 0x1E, 0x0F, 0xC6, 0x01, 0x80, 0x30, 0x07, 0x80, 0xF0, 0x0E, 0x01, 0x90,
+    0x67, 0xF0, 0x78, 0xFF, 0x9F, 0xE0, 0xC0, 0x30, 0x0C, 0x03, 0x00, 0xC0, 0x30, 0x0C, 0x03, 0x00,
+    0xC0, 0x30, 0x60, 0xC6, 0x0C, 0x60, 0xC6, 0x0C, 0x60, 0xC6, 0x0C, 0x60, 0xC2, 0x0C, 0x30, 0xC3,
+    0x0C, 0x1F, 0x80, 0xF0, 0x60, 0xCC, 0x18, 0xC3, 0x18, 0x43, 0x18, 0x23, 0x06, 0x60, 0xC8, 0x0B,
+    0x01, 0xE0, 0x38, 0x03, 0x00, 0xC3, 0x0D, 0x8C, 0x36, 0x38, 0x98, 0xE2, 0x66, 0x99, 0x9A, 0x62,
+    0x4D, 0x8D, 0x34, 0x3C, 0xD0, 0xF1, 0xC3, 0x87, 0x06, 0x1C, 0x61, 0x98, 0xC3, 0x30, 0xD8, 0x1E,
+    0x07, 0x01, 0xC0, 0x78, 0x36, 0x08, 0xC6, 0x31, 0x06, 0x60, 0xCC, 0x63, 0x18, 0x4C, 0x1B, 0x03,
+    0x80, 0xE0, 0x30, 0x0C, 0x03, 0x00, 0xC0, 0x30, 0x7F, 0x8F, 0xE0, 0x30, 0x18, 0x06, 0x03, 0x00,
+    0xC0, 0x60, 0x30, 0x0C, 0x07, 0xF9, 0xFE, 0x08, 0x20, 0x08, 0x60, 0x1F, 0xFE, 0x10, 0x60, 0x30,
+    0x40, 0x33, 0xFC, 0x72, 0x04, 0x73, 0xFC, 0x32, 0x04, 0x33, 0xFC, 0x32, 0x04, 0x32, 0x04, 0x33,
+    0xFC, 0x32, 0x04, 0x37, 0xFE, 0x10, 0x00, 0x00, 0x00, 0x00, 0x60, 0x7E, 0x60, 0x18, 0x60, 0x11,
+    0xFE, 0x10, 0x66, 0x10, 0x66, 0x10, 0x66, 0x10, 0x46, 0x1A, 0x46, 0x1E, 0xC6, 0x78, 0xC6, 0x41,
+    0x86, 0x03, 0x04, 0x06, 0x3C, 0x00, 0x00, 0x3F, 0xFE, 0x30, 0x00, 0x20, 0xC0, 0x20, 0xC0, 0x20,
+    0xC0, 0x20, 0xC0, 0x2F, 0xFC, 0x20, 0xC0, 0x20, 0xD0, 0x20, 0xC8, 0x60, 0xCC, 0x60, 0xC0, 0x60,
+    0xC0, 0x5F, 0xFE, 0x00, 0x00, 0x10, 0x40, 0x10, 0xC0, 0x10, 0xC0, 0x11, 0xFE, 0x7D, 0x86, 0x33,
+    0x06, 0x12, 0x86, 0x10, 0xC6, 0x10, 0x66, 0x10, 0x06, 0x1C, 0x3E, 0x38, 0xE6, 0x71, 0x84, 0x41,
+    0x04, 0x00, 0x0C, 0x00, 0x38, 0x00, 0x00, 0x01, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01,
+    0x80, 0x7F, 0xFE, 0x7F, 0xFE, 0x03, 0xC0, 0x03, 0xC0, 0x02, 0x40, 0x06, 0x60, 0x0C, 0x30, 0x0C,
+    0x38, 0x38, 0x1C, 0x70, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x3F, 0xFC, 0x01, 0x80, 0x11, 0x88, 0x19,
+    0x98, 0x09, 0x90, 0x09, 0x90, 0x01, 0x80, 0x7F, 0xFE, 0x01, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01,
+    0x80, 0x01, 0x80, 0x01, 0x80, 0x1F, 0xF8, 0x10, 0x08, 0x1F, 0xF8, 0x10, 0x08, 0x1F, 0xF8, 0x00,
+    0x00, 0x7F, 0xFE, 0x33, 0x00, 0x3F, 0xFE, 0x33, 0x44, 0x3F, 0x6C, 0x33, 0x38, 0x3F, 0x38, 0x7B,
+    0xEE, 0x02, 0x02, 0x00, 0x40, 0x30, 0x60, 0x38, 0x60, 0x07, 0xFE, 0x00, 0x88, 0x41, 0x8C, 0x73,
+    0xFC, 0x13, 0x86, 0x00, 0x48, 0x03, 0x48, 0x1B, 0x48, 0x13, 0x48, 0x32, 0x4A, 0x66, 0x4A, 0x64,
+    0x4E, 0x00, 0x00, 0x01, 0x00, 0x01, 0x80, 0x7F, 0xFE, 0x01, 0x00, 0x32, 0x6C, 0x17, 0xD8, 0x01,
+    0x80, 0x1B, 0x78, 0x77, 0xEC, 0x45, 0x24, 0x01, 0x80, 0x7F, 0xFE, 0x01, 0x80, 0x01, 0x80, 0x01,
+    0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0x80, 0x3F, 0xFC, 0x31, 0x8C, 0x31, 0x8C, 0x3F,
+    0xFC, 0x31, 0x8C, 0x31, 0x8C, 0x31, 0x8C, 0x3F, 0xFC, 0x31, 0x80, 0x01, 0x82, 0x01, 0x82, 0x01,
+    0xFE, 0x00, 0x00, 0x00, 0x20, 0x30, 0x20, 0x18, 0x20, 0x08, 0x20, 0x00, 0x20, 0x03, 0xFE, 0x7B,
+    0xFE, 0x18, 0x20, 0x18, 0x20, 0x18, 0x20, 0x18, 0x20, 0x1A, 0x20, 0x1E, 0x20, 0x1C, 0x20, 0x10,
+    0x20, 0x00, 0x20, 0x1F, 0xF8, 0x10, 0x08, 0x1F, 0xF8, 0x10, 0x08, 0x1F, 0xF8, 0x00, 0x00, 0x7F,
+    0xFE, 0x1F, 0xF8, 0x11, 0x8C, 0x1F, 0xFC, 0x11, 0x8C, 0x1F, 0xF8, 0x3F, 0xFC, 0x01, 0x80, 0x7F,
+    0xFE, 0x00, 0x00, 0x00, 0x00, 0x3F, 0xFC, 0x31, 0x8C, 0x3F, 0xFC, 0x31, 0x8C, 0x31, 0x8C, 0x3F,
+    0xFC, 0x0E, 0x20, 0x1F, 0xC0, 0x07, 0x18, 0x0F, 0xFC, 0x3F, 0x84, 0x09, 0xB0, 0x19, 0x98, 0x71,
+    0x8C, 0x03, 0x00, 0x00, 0x00, 0x63, 0xFC, 0x30, 0x00, 0x10, 0x00, 0x00, 0x00, 0x07, 0xFE, 0x70,
+    0xC0, 0x30, 0x90, 0x11, 0x98, 0x11, 0x0C, 0x13, 0xFC, 0x13, 0xFE, 0x10, 0x00, 0x7C, 0x00, 0x67,
+    0xFE, 0x00, 0x00, 0x08, 0x00, 0x19, 0xFE, 0x30, 0x00, 0x60, 0x00, 0x4C, 0x00, 0x0C, 0x00, 0x1B,
+    0xFE, 0x38, 0x18, 0x70, 0x18, 0x50, 0x18, 0x10, 0x18, 0x10, 0x18, 0x10, 0x18, 0x10, 0x18, 0x10,
+    0x78, 0x10, 0x00, 0x00, 0x08, 0x00, 0x0C, 0x7C, 0x0C, 0x64, 0x0C, 0x65, 0xFE, 0x64, 0x0C, 0x64,
+    0x0C, 0x7C, 0x8C, 0x64, 0xCC, 0x64, 0x6C, 0x64, 0x0C, 0x7C, 0x0C, 0x60, 0x0C, 0x60, 0x0C, 0x00,
+    0x78, 0x00, 0x00, 0x00, 0x00, 0x33, 0xFE, 0x18, 0x06, 0x00, 0x06, 0x60, 0x06, 0x67, 0xE6, 0x64,
+    0x26, 0x64, 0x26, 0x67, 0xE6, 0x64, 0x26, 0x64, 0x26, 0x64, 0x26, 0x67, 0xE6, 0x60, 0x06, 0x60,
+    0x06, 0x60, 0x0C, 0x00, 0x00,
+    0x92, 0x7F, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x79, 0x0A, 0x17, 0xE8, 0x50, 0x9D, 0x00,
+    0x82, 0x08, 0x20, 0xFA, 0x28, 0xA2, 0x8A, 0x28, 0xA2,
 };
 
-static const uint8_t f_w[53] = {
-    0,1,13,5,2,9,6,8,8,8,8,8,8,8,8,2,
-    11,10,11,11,10,9,11,11,4,9,11,9,13,10,11,9,
-    11,11,9,10,11,11,15,12,10,10,
-    15,14,15,15,14,15,15,15,15,12,
-    14
+static const uint8_t f_w[FONT_N] = {
+    0, 0, 15, 6, 5, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+    10, 11, 10, 11, 10, 9, 11, 12, 5, 9, 11, 9, 13, 12, 12, 10,
+    12, 11, 10, 10, 12, 11, 14, 10, 10, 10, 16, 16, 16, 16, 16, 16,
+    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 7, 6,
 };
-static const uint8_t f_h[53] = {
-    0,1,11,1,2,11,11,11,11,11,12,11,12,11,11,8,
-    12,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
-    14,11,11,12,11,11,11,11,11,11,
-    15,15,15,15,14,15,14,14,15,14,
-    14
+static const uint8_t f_h[FONT_N] = {
+    0, 0, 12, 6, 3, 9, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+    12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+    15, 12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 16, 15, 17, 16, 15,
+    15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 8, 8, 12,
 };
-static const int8_t f_ox[53] = {
-    0,0,1,1,2,1,3,1,1,1,1,1,1,1,1,2,
-    0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-    1,1,1,0,1,0,0,0,0,1,
-    1,1,1,1,1,1,1,0,0,3,
-    1
+static const int8_t f_ox[FONT_N] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
-static const int8_t f_oy[53] = {
-    0,0,0,4,10,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    -3,0,0,0,0,0,0,0,0,0,
-    -3,-3,-3,-2,-2,-3,-2,-2,-3,-2,
-    -2
+static const int8_t f_oy[FONT_N] = {
+    0, 19, 7, 13, 16, 10, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 5, 5, 6, 5, 5, 6,
+    6, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 11, 11, 7,
 };
-static const uint16_t f_bm[53] = {
-    0,0,1,19,20,21,34,43,54,65,76,88,99,111,122,133,
-    135,152,166,182,198,212,225,241,257,263,276,292,305,323,337,353,
-    366,386,402,415,430,446,462,483,500,514,
-    528,557,584,613,642,667,696,723,750,779,
-    771
+static const uint16_t f_bm[FONT_N] = {
+    0, 0, 0, 23, 28, 30, 36, 50, 64, 78, 92, 106, 120, 134, 148, 162,
+    176, 191, 208, 223, 240, 255, 269, 286, 304, 312, 326, 343, 357, 377, 395, 413,
+    428, 451, 468, 483, 498, 516, 533, 554, 569, 584, 599, 631, 663, 693, 727, 759,
+    789, 819, 851, 883, 915, 947, 979, 1011, 1043, 1075, 1107, 1141, 1150, 1157,
 };
-static const uint32_t f_uni[53] = {
-    0, 0x20, 0x25, 0x2D, 0x2E,
-    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A,
-    0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
-    0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56,
-    0x57, 0x58, 0x59, 0x5A,
-    0x503C, 0x529F, 0x538B, 0x5747, 0x5927, 0x5E73, 0x6700, 0x6D41, 0x7387, 0x7535,
-    0x8BA1
+static const uint32_t f_uni[FONT_N] = {
+    0x0000, 0x0020, 0x0025, 0x002D, 0x002E, 0x003A, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037, 0x0038, 0x0039,
+    0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0048, 0x0049, 0x004A, 0x004B, 0x004C, 0x004D, 0x004E, 0x004F, 0x0050,
+    0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059, 0x005A, 0x503C, 0x529F, 0x538B, 0x5747, 0x5927, 0x5E73,
+    0x6700, 0x6D41, 0x7387, 0x7535, 0x8BA1, 0x91CF, 0x7D2F, 0x8FD0, 0x884C, 0x65F6, 0x95F4, 0x006D, 0x0061, 0x0068,
 };
 
 static uint16_t font_find(uint32_t u)
 {
     uint8_t i;
-    for (i = 0; i < 53; i++)
+    for (i = 0; i < FONT_N; i++)
         if (f_w[i] && f_uni[i] == u) return i;
     return 0;
 }
@@ -284,29 +226,9 @@ void LCD_DrawPoint(uint16_t x, uint16_t y, uint16_t color)
     lcd_w_half_word(color);
 }
 
-void LCD_ShowChar(uint16_t x, uint16_t y, char ch, uint16_t color, uint16_t bg_color)
-{
-    (void)bg_color;
-    gput(x, y, (uint8_t)ch, 1, color);
-}
 
-void LCD_ShowString(uint16_t x, uint16_t y, const char *str, uint16_t color, uint16_t bg_color)
-{
-    (void)bg_color;
-    gputs(x, y, str, 1, color);
-}
 
-void LCD_ShowBigChar(uint16_t x, uint16_t y, char ch, uint16_t color, uint16_t bg_color)
-{
-    (void)bg_color;
-    gput(x, y, (uint8_t)ch, 2, color);
-}
 
-void LCD_ShowBigString(uint16_t x, uint16_t y, const char *str, uint16_t color, uint16_t bg_color)
-{
-    (void)bg_color;
-    gputs(x, y, str, 2, color);
-}
 
 /* ---- gradient fill via line buffer ---- */
 static void LCD_FillGradBuf(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
@@ -322,323 +244,650 @@ static void LCD_FillGradBuf(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
     {
         uint16_t ye = (i == n - 1) ? y1 : (y + bw);
         uint16_t t  = (uint16_t)(((uint32_t)i * 255) / (n - 1));
-        int16_t r = (int16_t)((c0 >> 11) & 0x1F) + (int16_t)(((int)((c1 >> 11) & 0x1F) - (int)((c0 >> 11) & 0x1F)) * t / 255);
-        int16_t g = (int16_t)((c0 >> 5)  & 0x3F) + (int16_t)(((int)((c1 >> 5)  & 0x3F) - (int)((c0 >> 5)  & 0x3F)) * t / 255);
-        int16_t b = (int16_t)(c0         & 0x1F) + (int16_t)(((int)(c1         & 0x1F) - (int)(c0         & 0x1F)) * t / 255);
-        if (r < 0) r = 0; if (r > 31) r = 31;
-        if (g < 0) g = 0; if (g > 63) g = 63;
-        if (b < 0) b = 0; if (b > 31) b = 31;
-        uint16_t col = (uint16_t)((r << 11) | (g << 5) | b);
+        int16_t r = (int16_t)((c0 >> 11) & 0x1F) + (int16_t)(((int)((c1 >> 11) & 0x1F) - (int)((c0 >> 11) & 0x1F)) * t >> 8);
+        int16_t g = (int16_t)((c0 >> 5)  & 0x3F) + (int16_t)(((int)((c1 >> 5)  & 0x3F) - (int)((c0 >> 5)  & 0x3F)) * t >> 8);
+        int16_t b = (int16_t)(c0         & 0x1F) + (int16_t)(((int)((c1         & 0x1F) - (int)((c0         & 0x1F))) * t >> 8));
+        uint16_t col;
         uint16_t px;
         uint32_t rows;
         uint16_t row;
+
+        if (r < 0) r = 0; if (r > 31) r = 31;
+        if (g < 0) g = 0; if (g > 63) g = 63;
+        if (b < 0) b = 0; if (b > 31) b = 31;
+        col = (uint16_t)((r << 11) | (g << 5) | b);
 
         for (px = 0; px < w; px++) ui_line_buf[px] = col;
         rows = (uint16_t)(ye - y);
         LCD_Address_Set(x0, y, (uint16_t)(x0 + w - 1), (uint16_t)(ye - 1));
         for (row = 0; row < rows; row++)
+        {
             for (px = 0; px < w; px++)
                 lcd_w_half_word(ui_line_buf[px]);
+        }
         y = ye;
     }
 }
 
-/* ================= LVGL-style Power Meter UI ================= */
+/* ================= UI ================= */
 
-void LCD_ShowIUW(float I, float U, float W,
-                 float Imax, float Umax, float Wavg,
-                 float energy_Wh,
-                 const float *hist, uint8_t hist_len)
+#define HDR_H   24
+#define CARD_X  4
+#define CARD_W  162
+#define BAR_W   4
+
+static char     g_txt[12][12];
+static uint16_t g_lastw[12];
+
+static uint16_t lerp565(uint16_t a, uint16_t b, uint8_t t)
 {
-    static uint8_t  first   = 1;
-    static uint16_t fcnt    = 0;
-    static uint8_t  prev_ci = 0xFF;
-    static uint16_t last_val_clrw[3];
-    static long     last_val_raw[3];
-    static long     last_sub_raw[3];
-    static uint16_t last_sub_clrw[3];
-    static long     last_energy_raw = -999999;
-    static uint16_t last_energy_clrw = 0;
-    static long     last_wavg_raw = -999999;
-    static uint16_t last_wavg_clrw = 0;
+    int r0 = (a >> 11) & 0x1F, g0 = (a >> 5) & 0x3F, b0 = a & 0x1F;
+    int r1 = (b >> 11) & 0x1F, g1 = (b >> 5) & 0x3F, b1 = b & 0x1F;
+    int r = r0 + (((r1 - r0) * (int)t) >> 8);
+    int g = g0 + (((g1 - g0) * (int)t) >> 8);
+    int bb = b0 + (((b1 - b0) * (int)t) >> 8);
+    return (uint16_t)((r << 11) | (g << 5) | bb);
+}
 
-    const uint16_t card_w  = 162;
-    const uint16_t card_x  = 4;
-    const uint16_t card_h  = 79;
-    const uint16_t bar_w   = 4;
-    const uint16_t cy[3]   = { 20, 102, 184 };
-    const uint16_t info_y  = 266;
-    const uint16_t graph_y = 295;
-    const uint16_t graph_h = 25;
+/* horizontal gradient fill (left->right), used for colour-rich bars */
+static void LCD_FillGradH(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                          uint16_t c0, uint16_t c1)
+{
+    uint16_t w = x1 - x0;
+    uint8_t  n = 8;
+    uint16_t sw, x = x0;
+    uint8_t  i;
 
-    static const uint16_t av[8] = { ACCENT_V, 0xFD00, ACCENT_V2, ORANGE,  LIME,  0x07E0, 0x04FF, 0xFFFF };
-    static const uint16_t aa[8] = { ACCENT_A, 0x04FF, ACCENT_A2, 0x06BF, 0x20E0, 0xFC60, 0x04DF, 0xFFE0 };
-    static const uint16_t aw[8] = { ACCENT_W, 0x97C0, ACCENT_W2, LIME,   0x07E0, 0xFD80, 0x06BF, 0xFFFF };
-    const uint16_t *accent[3] = { av, aa, aw };
-    uint8_t ci = (uint8_t)((fcnt / 10) & 0x07);
+    if (w == 0) return;
+    sw = (w > n) ? (uint16_t)(w / n) : 1;
+    for (i = 0; i < n; i++)
+    {
+        uint16_t xe = (i == n - 1) ? x1 : (uint16_t)(x + sw);
+        uint16_t t  = (uint16_t)((i * 255) / (n - 1));
+        uint16_t col;
+        if (xe > x1) xe = x1;
+        if (xe <= x) break;
+        col = lerp565(c0, c1, (uint8_t)t);
+        LCD_Fill(x, y0, (uint16_t)(xe - 1), y1, col);
+        x = xe;
+    }
+}
+
+static int same_str(const char *a, const char *b)
+{
+    while (*a && *b) { if (*a != *b) return 0; a++; b++; }
+    return (*a == 0 && *b == 0);
+}
+
+static void copy_str(char *d, const char *s)
+{
+    uint8_t i = 0;
+    while (s[i] && i < 11) { d[i] = s[i]; i++; }
+    d[i] = 0;
+}
+
+static void sapp(char *b, char c)
+{
+    uint8_t i = 0;
+    while (b[i]) i++;
+    b[i] = c;
+    b[i + 1] = 0;
+}
+
+static void fmt_num(char *b, int32_t v, uint8_t dec)
+{
+    uint32_t u, div = 1, ip, fp, scale = 1;
+    uint8_t n = 0, d, shift;
+    char t[12];
+    uint8_t tn = 0;
+
+    if (v < 0) { b[n++] = '-'; u = (uint32_t)(-v); }
+    else       u = (uint32_t)v;
+
+    shift = 4 - dec;
+    while (shift--) scale *= 10;
+    u = (u + scale / 2u) / scale;
+
+    for (d = 0; d < dec; d++) div *= 10;
+    ip = u / div;
+    fp = u % div;
+
+    if (ip == 0) t[tn++] = '0';
+    else { while (ip) { t[tn++] = (char)('0' + ip % 10); ip /= 10; } }
+    while (tn) b[n++] = t[--tn];
+
+    if (dec)
+    {
+        b[n++] = '.';
+        while (div > 1)
+        {
+            div /= 10;
+            b[n++] = (char)('0' + (fp / div) % 10);
+        }
+    }
+    b[n] = 0;
+}
+
+static void fmt_mah(char *b, int32_t v)
+{
+    if (v < 0) v = 0;
+    if (v < 1000000)       fmt_num(b, v, 3);
+    else if (v < 10000000) fmt_num(b, v, 2);
+    else                   fmt_num(b, v, 1);
+}
+
+static void fmt_time(char *b, uint32_t s)
+{
+    uint32_t h = s / 3600;
+    uint32_t m = (s / 60) % 60;
+    uint32_t ss = s % 60;
+    if (h > 99) h = 99;
+    b[0] = (char)('0' + h / 10);
+    b[1] = (char)('0' + h % 10);
+    b[2] = ':';
+    b[3] = (char)('0' + m / 10);
+    b[4] = (char)('0' + m % 10);
+    b[5] = ':';
+    b[6] = (char)('0' + ss / 10);
+    b[7] = (char)('0' + ss % 10);
+    b[8] = 0;
+}
+
+static void ui_reset(void)
+{
+    uint8_t i;
+    for (i = 0; i < 12; i++) { g_txt[i][0] = 0; g_lastw[i] = 0; }
+}
+
+static uint16_t ui_chw(uint8_t c, uint8_t sc)
+{
+    uint16_t id;
+    if (c == ' ') return (uint16_t)(sc * 4);
+    id = font_find(c);
+    return (uint16_t)((f_w[id] + 1) * sc);
+}
+
+/*
+ * Digit-level incremental refresh:
+ *  - returns 0 without touching the screen when the string is unchanged;
+ *  - redraws only the changed character cells when the length is stable,
+ *    so constant digits never flicker;
+ *  - full redraw only when the integer part grows/shrinks (length change).
+ * Returns 1 when anything changed.
+ */
+static uint8_t ui_field(uint8_t id, uint16_t bx, uint16_t by, uint16_t bw,
+                        uint8_t sc, uint8_t al, uint16_t fg, uint16_t bg, const char *s)
+{
+    uint16_t w, cw, cx, cy, ch, tx;
+    uint16_t olen = 0, nlen = 0, i;
+
+    if (same_str(g_txt[id], s)) return 0;
+
+    while (g_txt[id][olen]) olen++;
+    while (s[nlen]) nlen++;
+
+    w = gadvance(s, sc);
+    if (w > bw) w = bw;
+    cw = (g_lastw[id] > w) ? g_lastw[id] : w;
+    g_lastw[id] = w;
+
+    if (sc == 2) { cy = (uint16_t)(by + 12); ch = 28; }
+    else         { cy = (uint16_t)(by + 5);  ch = 16; }
+
+    cx = bx;
+    if (al == 1)      cx = (uint16_t)(bx + (bw - cw) / 2);
+    else if (al == 2) cx = (uint16_t)(bx + bw - cw);
+
+    tx = bx;
+    if (al == 1)      tx = (uint16_t)(bx + (bw - w) / 2);
+    else if (al == 2) tx = (uint16_t)(bx + bw - w);
+
+    if (olen != nlen)
+    {
+        LCD_Fill(cx, cy, (uint16_t)(cx + cw + 2), (uint16_t)(cy + ch), bg);
+        gputs(tx, by, s, sc, fg);
+    }
+    else
+    {
+        uint16_t px = tx;
+        for (i = 0; i < nlen; i++)
+        {
+            uint8_t oc = (uint8_t)g_txt[id][i];
+            uint8_t nc = (uint8_t)s[i];
+            if (oc != nc)
+            {
+                uint16_t wo = ui_chw(oc, sc);
+                uint16_t wn = ui_chw(nc, sc);
+                uint16_t wm = (wo > wn) ? wo : wn;
+                LCD_Fill((uint16_t)(px - 1), cy, (uint16_t)(px + wm + 1), (uint16_t)(cy + ch), bg);
+                gput(px, by, nc, sc, fg);
+            }
+            px += ui_chw(nc, sc);
+        }
+    }
+    copy_str(g_txt[id], s);
+    return 1;
+}
+
+static void ui_cloud(uint16_t x, uint16_t y)
+{
+    LCD_Fill((uint16_t)(x + 2), (uint16_t)(y + 4), (uint16_t)(x + 24), (uint16_t)(y + 8), CLOUD);
+    LCD_Fill((uint16_t)(x + 6), (uint16_t)(y + 1), (uint16_t)(x + 12), (uint16_t)(y + 5), CLOUD);
+    LCD_Fill((uint16_t)(x + 14), (uint16_t)(y + 2), (uint16_t)(x + 20), (uint16_t)(y + 6), CLOUD);
+    LCD_Fill((uint16_t)(x + 3), (uint16_t)(y + 8), (uint16_t)(x + 23), (uint16_t)(y + 9), CLOUD_SH);
+}
+
+static void ui_sun(uint16_t x, uint16_t y)
+{
+    LCD_Fill((uint16_t)(x - 4), y, (uint16_t)(x + 4), y, YELLOW);
+    LCD_Fill(x, (uint16_t)(y - 4), x, (uint16_t)(y + 4), YELLOW);
+    LCD_Fill((uint16_t)(x - 3), (uint16_t)(y - 3), (uint16_t)(x + 3), (uint16_t)(y + 3), YELLOW);
+}
+
+static void ui_battery(uint16_t x, uint16_t y, uint8_t loaded)
+{
+    LCD_Fill((uint16_t)(x + 1), (uint16_t)(y + 11), (uint16_t)(x + 25), (uint16_t)(y + 12), CARD_SHAD);
+    LCD_Fill(x, y, (uint16_t)(x + 21), (uint16_t)(y + 10), 0x39A7);
+    LCD_Fill((uint16_t)(x + 21), (uint16_t)(y + 3), (uint16_t)(x + 24), (uint16_t)(y + 7), 0x39A7);
+    LCD_Fill((uint16_t)(x + 1), (uint16_t)(y + 1), (uint16_t)(x + 20), (uint16_t)(y + 9), loaded ? 0x0540 : 0x2104);
+    LCD_Fill((uint16_t)(x + 2), (uint16_t)(y + 2), (uint16_t)(x + 6), (uint16_t)(y + 3), WHITE);
+    LCD_Fill((uint16_t)(x + 1), (uint16_t)(y + 1), (uint16_t)(x + 1), (uint16_t)(y + 4), WHITE);
+    if (loaded)
+    {
+        LCD_Fill((uint16_t)(x + 13), (uint16_t)(y + 1), (uint16_t)(x + 16), (uint16_t)(y + 4), YELLOW);
+        LCD_Fill((uint16_t)(x + 9),  (uint16_t)(y + 4), (uint16_t)(x + 14), (uint16_t)(y + 6), YELLOW);
+        LCD_Fill((uint16_t)(x + 6),  (uint16_t)(y + 6), (uint16_t)(x + 9),  (uint16_t)(y + 9), YELLOW);
+    }
+    else
+    {
+        uint8_t k;
+        for (k = 0; k < 7; k++)
+            LCD_Fill((uint16_t)(x + 5 + k), (uint16_t)(y + 7 - k), (uint16_t)(x + 5 + k), (uint16_t)(y + 7 - k), 0x8410);
+    }
+}
+
+
+/* 实心山：apex(cx,apex_y) 到底边 base_y，右侧带阴影面 */
+static void ui_mountain(uint16_t cx, uint16_t apex_y, uint16_t base_y,
+                        uint16_t halfw, uint16_t col, uint16_t sh)
+{
+    uint16_t h = (uint16_t)(base_y - apex_y);
+    uint16_t i;
+    if (h == 0) return;
+    for (i = 0; i <= h; i++)
+    {
+        uint16_t ww = (uint16_t)((uint32_t)halfw * i / h);
+        uint16_t y  = (uint16_t)(apex_y + i);
+        LCD_Fill((uint16_t)(cx - ww), y, (uint16_t)(cx + ww), y, col);
+        if (sh != col)
+            LCD_Fill((uint16_t)(cx + ww / 2), y, (uint16_t)(cx + ww), y, sh);
+    }
+}
+
+/* 河流：y0->y1，宽度 w_top -> w_bot 渐变 */
+static void ui_river(uint16_t cx, uint16_t y0, uint16_t y1,
+                     uint16_t w_top, uint16_t w_bot, uint16_t col)
+{
+    uint16_t y;
+    uint16_t span = (uint16_t)(y1 - y0);
+    for (y = y0; y <= y1; y++)
+    {
+        uint16_t w = (span == 0) ? w_bot :
+                     (uint16_t)(w_top + (uint32_t)(w_bot - w_top) * (y - y0) / span);
+        LCD_Fill((uint16_t)(cx - w / 2), y, (uint16_t)(cx + w / 2), y, col);
+    }
+}
+
+/* 河面波光：随 phase 流动的高亮短线 */
+static void ui_sparkle(uint16_t cx, uint16_t y0, uint16_t y1,
+                       uint16_t w, uint8_t phase, uint16_t col)
+{
+    uint16_t y;
+    for (y = y0; y <= y1; y++)
+    {
+        if (((y + phase) & 3) == 0)
+        {
+            uint16_t ww = (uint16_t)(w / 3);
+            uint16_t off = (uint16_t)((uint32_t)(y * 5 + phase * 7) % w);
+            uint16_t sx = (uint16_t)(cx - w / 2 + off);
+            uint16_t ex = (uint16_t)(sx + ww);
+            if (ex > (uint16_t)(cx + w / 2)) ex = (uint16_t)(cx + w / 2);
+            LCD_Fill(sx, y, ex, y, col);
+        }
+    }
+}
+
+static void ui_header_common(uint16_t c0, uint16_t c1, uint8_t dusk)
+{
+    const char *t = "\xE5\x8A\x9F\xE7\x8E\x87\xE8\xAE\xA1";
+    uint16_t tw = gadvance(t, 1);
+    LCD_FillGradBuf(0, 0, LCD_W, HDR_H, c0, c1, 4);
+    if (dusk)
+    {
+        LCD_Fill(140, 4, 152, 12, 0xFD40);
+        LCD_Fill(143, 2, 149, 14, 0xFD40);
+    }
+    else
+    {
+        ui_cloud(23, 2);
+        ui_cloud(112, 2);
+        ui_sun(146, 7);
+    }
+    gputs((uint16_t)((LCD_W - tw) / 2), 3, t, 1, WHITE);
+    LCD_Fill(0, (uint16_t)(HDR_H - 1), LCD_W, HDR_H, 0x05BF);
+}
+
+static void ui_header(void) { ui_header_common(HEADER_BG, SKY_TOP, 0); }
+static void ui_header_dusk(void) { ui_header_common(0x4013, 0xFD40, 1); }
+
+static void ui_live(uint8_t on)
+{
+    LCD_Fill(156, 9, 162, 14, on ? GREEN : 0x18C6);
+}
+
+static void ui_dots(uint8_t page)
+{
+    uint8_t i;
+    for (i = 0; i < 2; i++)
+    {
+        uint16_t x = (uint16_t)(5 + i * 10);
+        LCD_Fill(x, 9, (uint16_t)(x + 5), 14, (i == page) ? ACCENT_W : 0x39A7);
+    }
+}
+
+static void ui_card(uint16_t y, uint16_t h, uint16_t ac, uint16_t ac2,
+                    const char *label, const char *unit)
+{
+    uint16_t uw;
+    LCD_Fill(CARD_X, y, (uint16_t)(CARD_X + CARD_W), (uint16_t)(y + h), CARD_BG);
+    LCD_FillGradBuf(CARD_X, y, (uint16_t)(CARD_X + BAR_W), (uint16_t)(y + h), ac, ac2, 4);
+    LCD_Fill(CARD_X, y, (uint16_t)(CARD_X + CARD_W), (uint16_t)(y + 2), ac2);
+    LCD_Fill((uint16_t)(CARD_X + CARD_W - 2), y, (uint16_t)(CARD_X + CARD_W), (uint16_t)(y + h), CARD_SHAD);
+    LCD_Fill(CARD_X, (uint16_t)(y + h - 2), (uint16_t)(CARD_X + CARD_W), (uint16_t)(y + h), CARD_SHAD);
+    gputs((uint16_t)(CARD_X + BAR_W + 6), (uint16_t)(y + 4), label, 1, TEXT_MID);
+    if (unit)
+    {
+        uw = gadvance(unit, 1);
+        gputs((uint16_t)(CARD_X + CARD_W - uw - 6), (uint16_t)(y + 4), unit, 1, ac2);
+    }
+}
+
+static void ui_pbar(uint16_t x, uint16_t y, uint16_t w, uint16_t pct, uint16_t ac)
+{
+    uint16_t fw;
+    if (pct > 100) pct = 100;
+    fw = (uint16_t)((uint32_t)w * pct / 100);
+    LCD_Fill(x, y, (uint16_t)(x + w - 1), (uint16_t)(y + 2), CARD_SHAD);
+    if (fw > 0)
+        LCD_FillGradH(x, y, (uint16_t)(x + fw), (uint16_t)(y + 3), ac, 0xFFFF);
+}
+
+static uint16_t heat_color(uint8_t t)
+{
+    if (t < 64)       return lerp565(BLUE,   CYAN,   (uint8_t)(t << 2));
+    if (t < 128)      return lerp565(CYAN,   GREEN,  (uint8_t)((t - 64) << 2));
+    if (t < 192)      return lerp565(GREEN,  YELLOW, (uint8_t)((t - 128) << 2));
+    return lerp565(YELLOW, RED, (uint8_t)((t - 192) << 2));
+}
+
+static void ui_small(uint16_t x, uint16_t y, uint16_t ac, const char *label)
+{
+    LCD_Fill(x, y, (uint16_t)(x + 80), (uint16_t)(y + 60), CARD_BG);
+    LCD_Fill(x, y, (uint16_t)(x + 80), (uint16_t)(y + 2), ac);
+    LCD_Fill((uint16_t)(x + 78), y, (uint16_t)(x + 80), (uint16_t)(y + 60), CARD_SHAD);
+    LCD_Fill(x, (uint16_t)(y + 58), (uint16_t)(x + 80), (uint16_t)(y + 60), CARD_SHAD);
+    gputs((uint16_t)(x + 5), (uint16_t)(y + 5), label, 1, TEXT_MID);
+}
+
+static void ui_time_row(uint16_t y)
+{
+    LCD_Fill(CARD_X, y, (uint16_t)(CARD_X + CARD_W), (uint16_t)(y + 36), CARD_BG);
+    LCD_Fill(CARD_X, y, (uint16_t)(CARD_X + CARD_W), (uint16_t)(y + 2), ACCENT_W2);
+    LCD_Fill((uint16_t)(CARD_X + CARD_W - 2), y, (uint16_t)(CARD_X + CARD_W), (uint16_t)(y + 36), CARD_SHAD);
+    LCD_Fill(CARD_X, (uint16_t)(y + 34), (uint16_t)(CARD_X + CARD_W), (uint16_t)(y + 36), CARD_SHAD);
+    gputs(12, (uint16_t)(y + 9), "\xE8\xBF\x90\xE8\xA1\x8C\xE6\x97\xB6\xE9\x97\xB4", 1, TEXT_MID);
+}
+
+static void ui_footer(const char *s)
+{
+    uint16_t w = gadvance(s, 1);
+    gputs((uint16_t)((LCD_W - w) / 2), 272, s, 1, TEXT_DIM);
+}
+
+static void ui_page1(void)
+{
+    LCD_FillGradBuf(0, 0, LCD_W, LCD_H, SKY_TOP, SKY_BOT, 8);
+    ui_header();
+    ui_dots(0);
+    ui_card(24,  69, ACCENT_V,  ACCENT_V2, "\xE7\x94\xB5\xE5\x8E\x8B", "V");
+    ui_card(94,  69, ACCENT_A,  ACCENT_A2, "\xE7\x94\xB5\xE6\xB5\x81", "A");
+    ui_card(164, 69, ACCENT_W,  ACCENT_W2, "\xE5\x8A\x9F\xE7\x8E\x87", "W");
+    ui_card(234, 60, ACCENT_W2, 0xFFE0,     "\xE7\x94\xB5\xE9\x87\x8F", "mAh");
+}
+
+static void ui_page2(void)
+{
+    LCD_FillGradBuf(0, 0, LCD_W, 150, 0x4013, 0xFD40, 8);
+    LCD_FillGradBuf(0, 150, LCD_W, LCD_H, 0xFD40, 0x3206, 8);
+    ui_header_dusk();
+    ui_dots(1);
+    ui_card(26, 68, ACCENT_W2, 0xFFE0, "\xE7\xB4\xAF\xE8\xAE\xA1\xE7\x94\xB5\xE9\x87\x8F", "mAh");
+    ui_small(4,  98,  ACCENT_V, "\xE6\x9C\x80\xE5\xA4\xA7\xE7\x94\xB5\xE5\x8E\x8B");
+    ui_small(86, 98,  ACCENT_A, "\xE6\x9C\x80\xE5\xA4\xA7\xE7\x94\xB5\xE6\xB5\x81");
+    ui_small(4,  162, ACCENT_W, "\xE6\x9C\x80\xE5\xA4\xA7\xE5\x8A\x9F\xE7\x8E\x87");
+    ui_small(86, 162, LIME,     "\xE5\xB9\xB3\xE5\x9D\x87\xE5\x8A\x9F\xE7\x8E\x87");
+    ui_time_row(226);
+    ui_footer("STATS");
+}
+
+static void ui_boot_scene(uint16_t sun_y, uint8_t spark, uint8_t titlet)
+{
+    const char *t = "\xE5\x8A\x9F\xE7\x8E\x87\xE8\xAE\xA1";
+    uint16_t tw = gadvance(t, 2);
+
+    LCD_FillGradBuf(0, 0, LCD_W, 215, SKY_DAWN, SUNRISE, 8);
+    LCD_FillGradBuf(0, 215, LCD_W, LCD_H, SUNRISE, 0xFB20, 6);
+
+    LCD_Fill(78, (uint16_t)(sun_y - 7), 92, (uint16_t)(sun_y + 7), 0xFF80);
+    LCD_Fill(81, (uint16_t)(sun_y - 4), 89, (uint16_t)(sun_y + 4), YELLOW);
+
+    ui_mountain(28, 134, 200, 40, MT_FAR, MT_FAR);
+    ui_mountain(84, 124, 200, 50, MT_FAR, MT_FAR);
+    ui_mountain(142, 138, 200, 44, MT_FAR, MT_FAR);
+
+    ui_mountain(46, 178, 248, 58, MT_NEAR, MT_SHADE);
+    ui_mountain(132, 186, 248, 62, MT_NEAR, MT_SHADE);
+
+    ui_river(85, 248, 320, 8, 72, WATER);
+    ui_sparkle(85, 252, 316, 68, spark, WATER_HI);
+
+    if (titlet)
+        gputs((uint16_t)((LCD_W - tw) / 2), 78, t, 2, lerp565(SUNRISE, WHITE, titlet));
+}
+
+void LCD_BootAnim(void)
+{
+    const char *sub = "POWER METER";
+    const char *rd  = "READY";
+    uint16_t sw = gadvance(sub, 1);
+    uint16_t rw = gadvance(rd, 1);
+    uint8_t i;
+
+    for (i = 0; i < 7; i++)
+    {
+        ui_boot_scene((uint16_t)(112 - i * 11), 0, 0);
+        Delay_ms(85);
+    }
+
+    for (i = 1; i <= 9; i++)
+    {
+        ui_boot_scene(46, i, (uint8_t)(i * 28));
+        Delay_ms(60);
+    }
+
+    gputs((uint16_t)((LCD_W - sw) / 2), 150, sub, 1, WHITE);
+
+    LCD_Fill(8, 168, 162, 176, CARD_BG);
+    for (i = 1; i <= 13; i++)
+    {
+        uint16_t w = (uint16_t)(150 * i / 13);
+        LCD_FillGradH(10, 170, (uint16_t)(10 + w), 175, ACCENT_W, ACCENT_W2);
+        Delay_ms(45);
+    }
+
+    gputs((uint16_t)((LCD_W - rw) / 2), 184, rd, 1, WHITE);
+    Delay_ms(150);
+}
+
+static void draw_graph(const int32_t *hist, uint8_t hist_len, int32_t avg_w)
+{
+    const uint16_t gy = 295;
+    const uint16_t gh = 25;
+    const uint16_t gw = (uint16_t)(LCD_W - 4);
+    uint8_t i;
+    int32_t max_w = 0;
+    int32_t min_w = 0x7FFFFFFF;
+    int32_t den;
+    uint16_t bwpx;
+
+    if (!hist || hist_len == 0) return;
+
+    for (i = 0; i < hist_len; i++)
+    {
+        int32_t hw = hist[i];
+        if (hw > max_w) max_w = hw;
+        if (hw < min_w) min_w = hw;
+    }
+    if (max_w < 5000) max_w = 5000;
+    if (max_w - min_w < 1000) max_w = min_w + 1000;
+    den = max_w - min_w;
+
+    LCD_FillGradH(2, (uint16_t)(gy - 2), (uint16_t)(2 + gw), (uint16_t)(gy), SKY_BOT, WATER_MID);
+    LCD_FillGradBuf(2, gy, (uint16_t)(2 + gw), (uint16_t)(gy + gh), WATER_MID, WATER, 4);
+    LCD_Fill(2, (uint16_t)(gy + gh - 1), (uint16_t)(2 + gw), (uint16_t)(gy + gh), MT_SHADE);
+
+    bwpx = (uint16_t)(gw / hist_len);
+    if (bwpx < 2) bwpx = 2;
+
+    for (i = 0; i < hist_len; i++)
+    {
+        uint16_t bar_x, bar_h, bar_y, col;
+        int32_t num = hist[i] - min_w;
+        uint8_t norm8;
+
+        bar_x = (uint16_t)(2 + gw * i / hist_len);
+        bar_h = (uint16_t)((uint32_t)num * (gh - 3) / (uint32_t)den);
+        bar_y = (uint16_t)(gy + gh - 3 - bar_h + 1);
+        norm8 = (uint8_t)((uint32_t)num * 255u / (uint32_t)den);
+        col = heat_color(norm8);
+
+        if (bar_h > 0)
+        {
+            LCD_Fill(bar_x, bar_y, (uint16_t)(bar_x + bwpx - 1), (uint16_t)(bar_y + bar_h), col);
+            LCD_Fill(bar_x, bar_y, (uint16_t)(bar_x + bwpx - 1), bar_y, lerp565(col, WHITE, 96));
+        }
+    }
+
+    if (avg_w > min_w)
+    {
+        int32_t num = avg_w - min_w;
+        if (num > den) num = den;
+        if (num * 100 > den * 3)
+        {
+            uint16_t ay = (uint16_t)(gy + gh - 3 - (uint16_t)((uint32_t)num * (gh - 3) / (uint32_t)den) + 1);
+            for (i = 0; i < gw; i += 6)
+                LCD_Fill((uint16_t)(2 + i), ay, (uint16_t)(2 + i + 3), ay, WHITE);
+        }
+    }
+}
+
+void LCD_ShowIUW(int32_t I, int32_t U, int32_t W,
+                 int32_t Imax, int32_t Umax, int32_t Wmax, int32_t Wavg,
+                 int32_t charge_mAh, uint32_t uptime_s,
+                 const int32_t *hist, uint8_t hist_len, uint32_t now_ms)
+{
+    static uint8_t  first  = 1;
+    static uint8_t  page   = 0;
+    static uint32_t t0     = 0;
+    static uint32_t tg     = 0;
+    static uint32_t tl     = 0;
+    static uint8_t  live   = 0;
+    static uint8_t  bat    = 0xFF;
+    char b[12];
 
     if (first)
     {
-        uint16_t i;
-
-        LCD_FillGradBuf(0, 0, LCD_W, LCD_H, BG_DARK, BG_MID, 8);
-
-        LCD_Fill(0, 0, LCD_W, 18, HEADER_BG);
-        {
-            const char *title = "\xE5\x8A\x9F\xE7\x8E\x87";
-            uint16_t tw = gadvance(title, 1);
-            gputs((LCD_W - tw) / 2, 3, title, 1, WHITE);
-        }
-
-        for (i = 0; i < 3; i++)
-        {
-            const char *label = (i == 0) ? "\xE7\x94\xB5\xE5\x8E\x8B"
-                             : (i == 1) ? "\xE7\x94\xB5\xE6\xB5\x81"
-                                       : "\xE5\x8A\x9F\xE7\x8E\x87";
-            const char *unit = (i == 0) ? "V" : (i == 1) ? "A" : "W";
-            uint16_t y  = cy[i];
-            uint16_t ac = accent[i][0];
-
-            LCD_Fill(card_x, y, (uint16_t)(card_x + card_w), (uint16_t)(y + card_h), CARD_BG);
-            LCD_Fill(card_x, y, (uint16_t)(card_x + bar_w), (uint16_t)(y + card_h), ac);
-            LCD_Fill(card_x, y, (uint16_t)(card_x + card_w), (uint16_t)(y + 1), ac);
-
-            gputs((uint16_t)(card_x + bar_w + 5), (uint16_t)(y + 4), label, 1, TEXT_MID);
-            {
-                uint16_t uw = gadvance(unit, 1);
-                gputs((uint16_t)(card_x + card_w - uw - 3), (uint16_t)(y + 4), unit, 1, TEXT_MID);
-            }
-        }
-
-        {
-            const char *info_label = "Energy";
-            gputs(8, (uint16_t)(info_y + 2), info_label, 1, TEXT_DIM);
-        }
-
         first = 0;
+        t0 = now_ms;
+        page = 0;
+        ui_reset();
+        ui_page1();
+        live = 1;
+        ui_live(live);
     }
-
-    if (ci != prev_ci)
+    else
     {
-        uint8_t i;
-        prev_ci = ci;
-        for (i = 0; i < 3; i++)
+        uint8_t np = (uint8_t)(((now_ms - t0) / 15000) & 1);
+        if (np != page)
         {
-            uint16_t y  = cy[i];
-            uint16_t ac = accent[i][ci];
-            LCD_Fill(card_x, (uint16_t)(y + 1), (uint16_t)(card_x + bar_w), (uint16_t)(y + card_h), ac);
-            LCD_Fill(card_x, y, (uint16_t)(card_x + card_w), (uint16_t)(y + 1), ac);
+            page = np;
+            ui_reset();
+            bat = 0xFF;
+            if (page) ui_page2();
+            else      ui_page1();
         }
     }
 
+    if (page == 0)
     {
-        uint8_t i;
-        for (i = 0; i < 3; i++)
-        {
-            float    v   = (i == 0) ? U : (i == 1) ? I : W;
-            uint16_t y   = cy[i];
-            uint16_t ac  = accent[i][ci];
-            char     buf[12];
-            uint8_t  n = 0;
-            long     ip, ipart, fpart;
-            char     st[8];
-            uint8_t  sn = 0;
+        uint8_t nb = (W > 500) ? 1u : 0u;
+        if (nb != bat) { bat = nb; ui_battery(70, 238, bat); }
 
-            ip = (long)(v * 100.0f + (v >= 0 ? 0.5f : -0.5f));
-            if (ip < 0) { buf[n++] = '-'; ip = -ip; }
-            ipart = ip / 100;
-            fpart = ip % 100;
-            if (ipart == 0) { buf[n++] = '0'; }
-            else { do { st[sn++] = (char)('0' + (ipart % 10)); ipart /= 10; } while (ipart > 0); }
-            while (sn) buf[n++] = st[--sn];
-            buf[n++] = '.';
-            buf[n++] = (char)('0' + (fpart / 10));
-            buf[n++] = (char)('0' + (fpart % 10));
-            buf[n] = '\0';
+        if (ui_field(0, 8, 46, 154, 2, 1, ACCENT_V2, CARD_BG, (fmt_num(b, U, 4), b)))
+            ui_pbar(10, 84, 146, (uint16_t)(U / 2500), ACCENT_V);
 
-            if (last_val_raw[i] != ip)
-            {
-                uint16_t nw = gadvance(buf, 2);
-                uint16_t ox = (uint16_t)(card_x + bar_w + (card_w - bar_w - nw) / 2);
-                uint16_t clr_w = (uint16_t)(last_val_clrw[i] > nw ? last_val_clrw[i] : nw);
-                uint16_t clr_x = (uint16_t)(card_x + bar_w + (card_w - bar_w - clr_w) / 2);
+        if (ui_field(1, 8, 116, 154, 2, 1, ACCENT_A2, CARD_BG, (fmt_num(b, I, 4), b)))
+            ui_pbar(10, 154, 146, (uint16_t)(I / 800), ACCENT_A);
 
-                LCD_Fill(clr_x, (uint16_t)(y + 22), (uint16_t)(clr_x + clr_w), (uint16_t)(y + 55), CARD_BG);
-                last_val_raw[i] = ip;
-                last_val_clrw[i] = nw;
-                gputs(ox, (uint16_t)(y + 28), buf, 2, ac);
-            }
+        if (ui_field(2, 8, 186, 154, 2, 1, ACCENT_W2, CARD_BG, (fmt_num(b, W, 4), b)))
+            ui_pbar(10, 224, 146, (uint16_t)(W / 18000), ACCENT_W);
 
-            {
-                float     sv    = (i == 2) ? Wavg : (i == 0) ? Umax : Imax;
-                char      sunit = (i == 0) ? 'V' : (i == 1) ? 'A' : 'W';
-                const char *stag = (i == 2) ? "AVG:" : "MAX:";
-                char      sbuf[16];
-                uint8_t   k = 0;
-                long      sip, sipart, sfpart;
-                char      stmp[8];
-                uint8_t   stn = 0;
-                uint16_t  sx  = (uint16_t)(card_x + bar_w + 4);
-                uint16_t  sy  = (uint16_t)(y + 60);
-
-                sip = (long)(sv * 100.0f + (sv >= 0 ? 0.5f : -0.5f));
-
-                if (last_sub_raw[i] != sip)
-                {
-                    while (*stag) sbuf[k++] = *stag++;
-                    sbuf[k++] = ' ';
-                    if (sip < 0) { sbuf[k++] = '-'; sip = -sip; }
-                    sipart = sip / 100;
-                    sfpart = sip % 100;
-                    if (sipart == 0) { sbuf[k++] = '0'; }
-                    else { do { stmp[stn++] = (char)('0' + (sipart % 10)); sipart /= 10; } while (sipart > 0); }
-                    while (stn) sbuf[k++] = stmp[--stn];
-                    sbuf[k++] = '.';
-                    sbuf[k++] = (char)('0' + (sfpart / 10));
-                    sbuf[k++] = (char)('0' + (sfpart % 10));
-                    sbuf[k++] = sunit;
-                    sbuf[k] = '\0';
-
-                    {
-                        uint16_t sub_w = gadvance(sbuf, 1);
-                        uint16_t clr_w = (uint16_t)(last_sub_clrw[i] > sub_w ? last_sub_clrw[i] : sub_w);
-                        LCD_Fill(sx, (uint16_t)(sy - 1), (uint16_t)(sx + clr_w + 2), (uint16_t)(sy + 13), CARD_BG);
-                        last_sub_raw[i] = sip;
-                        last_sub_clrw[i] = sub_w;
-                    }
-                    gputs(sx, sy, sbuf, 1, TEXT_MID);
-                }
-            }
-        }
+        fmt_mah(b, charge_mAh);
+        ui_field(3, 8, 254, 154, 2, 1, 0xFFE0, CARD_BG, b);
     }
-
+    else
     {
-        char   ebuf[16];
-        uint8_t en = 0;
-        long   eip, eipart, efpart;
-        char   est[8];
-        uint8_t esn = 0;
+        fmt_mah(b, charge_mAh);
+        ui_field(4, 12, 50, 150, 2, 1, 0xFFE0, CARD_BG, b);
 
-        eip = (long)(energy_Wh * 1000.0f + 0.5f);
-        eipart = eip / 1000;
-        efpart = eip % 1000;
+        fmt_num(b, Umax, 2); sapp(b, 'V');
+        ui_field(5, 8, 132, 72, 1, 1, WHITE, CARD_BG, b);
 
-        if (eipart == 0) { ebuf[en++] = '0'; }
-        else { do { est[esn++] = (char)('0' + (eipart % 10)); eipart /= 10; } while (eipart > 0); }
-        while (esn) ebuf[en++] = est[--esn];
-        ebuf[en++] = '.';
-        ebuf[en++] = (char)('0' + (efpart / 100));
-        ebuf[en++] = (char)('0' + ((efpart / 10) % 10));
-        ebuf[en++] = (char)('0' + (efpart % 10));
-        ebuf[en++] = 'W';
-        ebuf[en++] = 'h';
-        ebuf[en]   = '\0';
+        fmt_num(b, Imax, 3); sapp(b, 'A');
+        ui_field(6, 90, 132, 72, 1, 1, WHITE, CARD_BG, b);
 
-        if (last_energy_raw != eip)
-        {
-            uint16_t ew = gadvance(ebuf, 1);
-            uint16_t ex = (uint16_t)(LCD_W - ew - 4);
-            uint16_t ey = (uint16_t)(info_y + 2);
-            uint16_t clr_w = (uint16_t)(last_energy_clrw > ew ? last_energy_clrw : ew);
+        fmt_num(b, Wmax, 2); sapp(b, 'W');
+        ui_field(7, 8, 196, 72, 1, 1, WHITE, CARD_BG, b);
 
-            LCD_Fill((uint16_t)(ex - 2), ey, (uint16_t)(ex + clr_w + 2), (uint16_t)(ey + 13), BG_MID);
-            last_energy_raw = eip;
-            last_energy_clrw = ew;
-            gputs(ex, ey, ebuf, 1, ACCENT_W2);
-        }
+        fmt_num(b, Wavg, 2); sapp(b, 'W');
+        ui_field(8, 90, 196, 72, 1, 1, WHITE, CARD_BG, b);
+
+        fmt_time(b, uptime_s);
+        ui_field(9, 84, 235, 74, 1, 2, WHITE, CARD_BG, b);
     }
 
+    if ((uint32_t)(now_ms - tg) >= 500)
     {
-        float wavg = Wavg;
-        long  wavg_raw = (long)(wavg * 100.0f + 0.5f);
-
-        if (last_wavg_raw != wavg_raw)
-        {
-            char    wbuf[16];
-            uint8_t wn = 0;
-            long    wip, wipart, wfpart;
-            char    wst[8];
-            uint8_t wsn = 0;
-            uint16_t sx = (uint16_t)(card_x + bar_w + 4);
-            uint16_t sy = (uint16_t)(cy[2] + 60);
-
-            wip = wavg_raw;
-            if (wip < 0) { wbuf[wn++] = '-'; wip = -wip; }
-            wipart = wip / 100;
-            wfpart = wip % 100;
-            if (wipart == 0) { wbuf[wn++] = '0'; }
-            else { do { wst[wsn++] = (char)('0' + (wipart % 10)); wipart /= 10; } while (wipart > 0); }
-            while (wsn) wbuf[wn++] = wst[--wsn];
-            wbuf[wn++] = '.';
-            wbuf[wn++] = (char)('0' + (wfpart / 10));
-            wbuf[wn++] = (char)('0' + (wfpart % 10));
-            wbuf[wn++] = 'W';
-            wbuf[wn]   = '\0';
-
-            {
-                uint16_t sub_w = gadvance(wbuf, 1);
-                uint16_t clr_w = (uint16_t)(last_wavg_clrw > sub_w ? last_wavg_clrw : sub_w);
-                LCD_Fill(sx + 40, (uint16_t)(sy - 1), (uint16_t)(sx + 40 + clr_w + 2), (uint16_t)(sy + 13), CARD_BG);
-                last_wavg_raw = wavg_raw;
-                last_wavg_clrw = sub_w;
-            }
-            gputs((uint16_t)(sx + 40), sy, wbuf, 1, TEXT_MID);
-        }
+        tg = now_ms;
+        draw_graph(hist, hist_len, Wavg);
     }
 
-    if ((fcnt & 3) == 0 && hist_len > 0 && hist)
+    if ((uint32_t)(now_ms - tl) >= 500)
     {
-        uint8_t i;
-        uint16_t gy = graph_y;
-        uint16_t gh = graph_h;
-        uint16_t gw = (uint16_t)(LCD_W - 4);
-        float    max_w = 0.0f;
-        float    min_w = 9999.0f;
-
-        for (i = 0; i < hist_len; i++)
-        {
-            float hw = hist[i];
-            if (hw > max_w) max_w = hw;
-            if (hw < min_w) min_w = hw;
-        }
-        if (max_w < 0.5f) max_w = 0.5f;
-        if (max_w - min_w < 0.1f) max_w = min_w + 0.1f;
-
-        LCD_Fill(2, gy, (uint16_t)(2 + gw), (uint16_t)(gy + gh), BG_DARK);
-        LCD_Fill(2, (uint16_t)(gy + gh - 1), (uint16_t)(2 + gw), (uint16_t)(gy + gh), GRAY);
-
-        {
-            uint16_t bar_w_px = (uint16_t)(gw / hist_len);
-            if (bar_w_px < 2) bar_w_px = 2;
-
-            for (i = 0; i < hist_len; i++)
-            {
-                uint16_t h;
-                uint16_t bar_x, bar_h, bar_y;
-                uint16_t col;
-                float norm;
-
-                h = (uint16_t)(gw * i / hist_len);
-                if (h >= gw) continue;
-                norm = (hist[i] - min_w) / (max_w - min_w);
-                if (norm < 0.0f) norm = 0.0f;
-                if (norm > 1.0f) norm = 1.0f;
-
-                bar_x = (uint16_t)(2 + gw * i / hist_len);
-                bar_h = (uint16_t)((gh - 3) * norm);
-                bar_y = (uint16_t)(gy + gh - 3 - bar_h + 1);
-
-                if (norm < 0.33f)      col = 0x06BF;
-                else if (norm < 0.66f) col = ACCENT_W;
-                else                    col = ACCENT_V;
-
-                if (bar_h > 0)
-                    LCD_Fill(bar_x, bar_y, (uint16_t)(bar_x + bar_w_px - 1), (uint16_t)(bar_y + bar_h), col);
-            }
-        }
+        tl = now_ms;
+        live = (uint8_t)!live;
+        ui_live(live);
     }
-
-    fcnt++;
 }
 
 /* ================= low-level hardware layer ================= */
@@ -666,6 +915,8 @@ void LCD_Fill(uint16_t xsta, uint16_t ysta, uint16_t xend, uint16_t yend, uint16
         }
     }
 }
+
+
 
 void lcd_init(void)
 {
@@ -709,13 +960,3 @@ void lcd_init(void)
     lcd_w_reg(0x29);
 }
 
-void lcd_test_demo(void)
-{
-    LCD_Fill(0, 0, LCD_W, LCD_H, RED);
-    Delay_ms(200);
-    LCD_Fill(0, 0, LCD_W, LCD_H, GREEN);
-    Delay_ms(200);
-    LCD_Fill(0, 0, LCD_W, LCD_H, BLUE);
-    Delay_ms(200);
-    LCD_Fill(0, 0, LCD_W, LCD_H, BLACK);
-}

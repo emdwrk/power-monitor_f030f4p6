@@ -50,24 +50,35 @@
 #define ACCENT_W2  0xAF60
 #define TEXT_DIM   0x9CD3
 #define TEXT_MID   0xCE59
-#define HEADER_BG  0x10A4
+#define HEADER_BG  0x02BF
+
+/* sky background / clouds */
+#define SKY_TOP    0x03DF
+#define SKY_MID    0x3E9F
+#define SKY_BOT    0xD7FF
+#define CLOUD      0xFFFF
+#define CLOUD_SH   0xCEDF
+#define GRAPH_BG   0x08A3
+
+/* landscape / nature theme */
+#define SKY_DAWN   0x0863
+#define SUNRISE    0xFD40
+#define MT_FAR     0x3D6B
+#define MT_NEAR    0x1A63
+#define MT_SHADE   0x1121
+#define WATER      0x03BF
+#define WATER_MID  0x057F
+#define WATER_HI   0xBFDF
 
 void lcd_init(void);
-void lcd_test_demo(void);
 void LCD_Address_Set(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
 void LCD_Fill(uint16_t xsta, uint16_t ysta, uint16_t xend, uint16_t yend, uint16_t color);
 void LCD_DrawPoint(uint16_t x, uint16_t y, uint16_t color);
-void LCD_ShowChar(uint16_t x, uint16_t y, char ch, uint16_t color, uint16_t bg_color);
-void LCD_ShowString(uint16_t x, uint16_t y, const char *str, uint16_t color, uint16_t bg_color);
-void LCD_ShowBigChar(uint16_t x, uint16_t y, char ch, uint16_t color, uint16_t bg_color);
-void LCD_ShowBigString(uint16_t x, uint16_t y, const char *str, uint16_t color, uint16_t bg_color);
-void LCD_ShowFloat(uint16_t x, uint16_t y, float val, uint8_t decimals,
-                   uint16_t color, uint16_t bg_color);
-void LCD_ShowBigFloat(uint16_t x, uint16_t y, float val, uint8_t decimals,
-                      uint16_t color, uint16_t bg_color);
-void LCD_ShowIUW(float I, float U, float W,
-                 float Imax, float Umax, float Wavg,
-                 float energy_Wh,
-                 const float *hist, uint8_t hist_len);
+void LCD_ShowIUW(int32_t I, int32_t U, int32_t W,
+                 int32_t Imax, int32_t Umax, int32_t Wmax, int32_t Wavg,
+                 int32_t charge_mAh, uint32_t uptime_s,
+                 const int32_t *hist, uint8_t hist_len, uint32_t now_ms);
+void LCD_BootAnim(void);
+
 
 #endif
